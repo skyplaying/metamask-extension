@@ -1,5 +1,4 @@
 import React from 'react';
-import { MAINNET_CHAIN_ID } from '../../../../shared/constants/network';
 import FeeCard from './fee-card';
 
 const containerStyle = {
@@ -8,7 +7,7 @@ const containerStyle = {
 
 export default {
   title: 'Pages/Swaps/FeeCard',
-  id: __filename,
+
   component: FeeCard,
   argTypes: {
     primaryFee: {
@@ -80,11 +79,6 @@ export default {
         type: 'boolean',
       },
     },
-    supportsEIP1559V2: {
-      control: {
-        type: 'boolean',
-      },
-    },
   },
   args: {
     primaryFee: '1 ETH',
@@ -95,21 +89,14 @@ export default {
     tokenApprovalSourceTokenSymbol: 'ABC',
     metaMaskFee: '0.875',
     numberOfQuotes: 6,
-    chainId: MAINNET_CHAIN_ID,
-    isBestQuote: true,
   },
 };
 
 export const DefaultStory = (args) => {
   // Please note, currently nested arg types are not possible, but discussions are open:
   // https://github.com/storybookjs/storybook/issues/11486
-  const {
-    primaryFee,
-    primaryMaxFee,
-    secondaryFee,
-    secondaryMaxFee,
-    ...rest
-  } = args;
+  const { primaryFee, primaryMaxFee, secondaryFee, secondaryMaxFee, ...rest } =
+    args;
 
   return (
     <div style={containerStyle}>

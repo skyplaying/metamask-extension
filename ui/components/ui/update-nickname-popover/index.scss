@@ -1,3 +1,4 @@
+@use "design-system";
 
 .update-nickname {
   &__wrapper {
@@ -13,7 +14,7 @@
       border-radius: 10px;
     }
 
-    @media screen and (max-width: $break-small) {
+    @include design-system.screen-sm-max {
       width: 96%;
       height: 96%;
     }
@@ -24,7 +25,7 @@
   }
 
   &__content {
-    padding: 0 20px 20px 20px;
+    padding: 0 18px 20px 18px;
     position: relative;
 
     &__indenticon {

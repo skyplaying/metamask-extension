@@ -2,8 +2,8 @@ import React from 'react';
 import PermissionsRedirect from '.';
 
 export default {
-  title: 'Components/Pages/PermissionsConnect/Redirect/PermissionsRedirect',
-  id: __filename,
+  title: 'Pages/PermissionsConnect/Redirect/PermissionsRedirect',
+
   argTypes: {
     subjectMetadata: {
       control: 'object',

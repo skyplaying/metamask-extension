@@ -1,3 +1,5 @@
+@use "design-system";
+
 @import 'quote-details/index';
 
 .select-quote-popover {
@@ -9,7 +11,7 @@
   &__popover-wrap {
     height: 100%;
 
-    @media screen and (min-width: $break-large) {
+    @include design-system.screen-sm-min {
       height: 620px;
       width: 348px;
     }
@@ -31,7 +33,7 @@
     background: var(--color-background-alternative);
     opacity: 1;
 
-    @media screen and (min-width: $break-large) {
+    @include design-system.screen-sm-min {
       opacity: 0.5;
     }
   }
@@ -55,7 +57,7 @@
   }
 
   &__column-headers {
-    @include H8;
+    @include design-system.H8;
 
     font-weight: bold;
     color: var(--color-text-default);
@@ -69,7 +71,7 @@
   }
 
   &__row {
-    @include H6;
+    @include design-system.H6;
 
     cursor: pointer;
     color: var(--color-text-default);
@@ -98,7 +100,7 @@
     &--selected {
       color: var(--color-primary-inverse);
       background: linear-gradient(90deg, var(--color-primary-default) 0%, var(--color-primary-alternative) 101.32%);
-      box-shadow: 0 10px 39px rgba(3, 125, 214, 0.15);
+      box-shadow: var(--shadow-size-lg) var(--color-shadow-default);
       border-radius: 8px;
       height: 64px;
 
@@ -113,7 +115,7 @@
         color: var(--color-primary-inverse);
 
         &:hover {
-          color: var(--color-text-default);
+          color: var(--color-icon-alternative);
         }
       }
 
@@ -246,7 +248,7 @@
     }
 
     &--orange {
-      background: var(--color-secondary-default);
+      background: var(--color-warning-default);
     }
 
     &--green {

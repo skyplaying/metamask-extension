@@ -16,11 +16,10 @@ export default function InfoTooltip({
   position = '',
   containerClassName,
   wrapperClassName,
-  wide,
-  iconFillColor = 'var(--color-icon-default)',
+  iconFillColor = 'var(--color-icon-alternative)',
 }) {
   return (
-    <div className="info-tooltip">
+    <div className="info-tooltip" data-testid="info-tooltip">
       <Tooltip
         interactive
         position={position}
@@ -32,7 +31,7 @@ export default function InfoTooltip({
         tooltipInnerClassName="info-tooltip__tooltip-content"
         tooltipArrowClassName={positionArrowClassMap[position]}
         html={contentText}
-        theme={wide ? 'tippy-tooltip-wideInfo' : 'tippy-tooltip-info'}
+        theme="tippy-tooltip-info"
       >
         <InfoTooltipIcon fillColor={iconFillColor} />
       </Tooltip>
@@ -44,15 +43,11 @@ InfoTooltip.propTypes = {
   /**
    * Text label that shows up after hover
    */
-  contentText: PropTypes.node,
+  contentText: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   /**
    * Shows position of the tooltip
    */
   position: PropTypes.oneOf(['top', 'left', 'bottom', 'right']),
-  /**
-   * Set if the tooltip wide
-   */
-  wide: PropTypes.bool,
   /**
    * Add custom CSS class for container
    */

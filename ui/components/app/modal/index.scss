@@ -1,3 +1,5 @@
+@use "design-system";
+
 @import 'modal-content/index';
 
 .modal-container {
@@ -8,7 +10,7 @@
   flex-flow: column;
   border-radius: 8px;
 
-  @media screen and (max-width: $break-small) {
+  @include design-system.screen-sm-max {
     max-height: 450px;
   }
 
@@ -17,7 +19,7 @@
     flex: 1;
     padding: 16px 32px;
 
-    @media screen and (max-width: $break-small) {
+    @include design-system.screen-sm-max {
       justify-content: center;
       padding: 28px 20px;
     }

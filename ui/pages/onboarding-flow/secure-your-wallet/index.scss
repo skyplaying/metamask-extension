@@ -1,34 +1,10 @@
 .secure-your-wallet {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  max-width: 1000px;
-  max-height: 1300px;
-
-  &__details {
-    max-width: 550px;
-    padding-inline-end: 10px;
-  }
-
-  &__actions {
-    button {
-      margin: 16px;
-    }
+  &__video {
+    max-width: 100%;
   }
 
   &__list {
     list-style: disc inside;
-
-    li {
-      font-size: 18px;
-    }
-  }
-
-  &__highlighted {
-    background-color: var(--color-primary-muted);
-    padding: 12px;
-    border-radius: 10px;
   }
 }
 
@@ -36,7 +12,6 @@
   width: 365px;
 
   &__icon {
-    color: var(--color-error-default);
     display: block;
     margin-top: 16px;
     margin-bottom: 16px;

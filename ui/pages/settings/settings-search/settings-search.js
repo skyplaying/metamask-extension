@@ -4,8 +4,13 @@ import Fuse from 'fuse.js';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '../../../components/ui/text-field';
 import { I18nContext } from '../../../contexts/i18n';
-import SearchIcon from '../../../components/ui/search-icon';
 import { isEqualCaseInsensitive } from '../../../../shared/modules/string-utils';
+import {
+  Icon,
+  IconName,
+  IconSize,
+} from '../../../components/component-library';
+import { IconColor } from '../../../helpers/constants/design-system';
 
 export default function SettingsSearch({
   onSearch,
@@ -15,14 +20,13 @@ export default function SettingsSearch({
   const t = useContext(I18nContext);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchIconColor, setSearchIconColor] = useState(
-    'var(--color-icon-muted)',
-  );
+
+  const [searchIconColor, setSearchIconColor] = useState(IconColor.iconMuted);
 
   const settingsRoutesListArray = Object.values(settingsRoutesList);
   const settingsSearchFuse = new Fuse(settingsRoutesListArray, {
     shouldSort: true,
-    threshold: 0.2,
+    threshold: 0.3,
     location: 0,
     distance: 100,
     maxPatternLength: 32,
@@ -32,21 +36,18 @@ export default function SettingsSearch({
   });
 
   const handleSearch = (_searchQuery) => {
-    const sanitizedSearchQuery = _searchQuery.replace(
-      /[^A-z0-9\s&]|[\\]/gu,
-      '',
-    );
+    const sanitizedSearchQuery = _searchQuery.trimStart();
     setSearchQuery(sanitizedSearchQuery);
     if (sanitizedSearchQuery === '') {
-      setSearchIconColor('var(--color-icon-muted)');
+      setSearchIconColor(IconColor.iconMuted);
     } else {
-      setSearchIconColor('var(--color-icon-default)');
+      setSearchIconColor(IconColor.iconDefault);
     }
 
     const fuseSearchResult = settingsSearchFuse.search(sanitizedSearchQuery);
     const addressSearchResult = settingsRoutesListArray.filter((routes) => {
       return (
-        routes.tab &&
+        routes.tabMessage &&
         sanitizedSearchQuery &&
         isEqualCaseInsensitive(routes.tab, sanitizedSearchQuery)
       );
@@ -59,7 +60,11 @@ export default function SettingsSearch({
   const renderStartAdornment = () => {
     return (
       <InputAdornment position="start" style={{ marginRight: '12px' }}>
-        <SearchIcon color={searchIconColor} />
+        <Icon
+          size={IconSize.Sm}
+          name={IconName.Search}
+          color={searchIconColor}
+        />
       </InputAdornment>
     );
   };
@@ -74,9 +79,10 @@ export default function SettingsSearch({
             onClick={() => handleSearch('')}
             style={{ cursor: 'pointer' }}
           >
-            <i
-              className="fa fa-times"
-              style={{ color: 'var(--color-icon-default)' }}
+            <Icon
+              name={IconName.Close}
+              color={IconColor.iconDefault}
+              size={IconSize.Xs}
             />
           </InputAdornment>
         )}
@@ -87,7 +93,7 @@ export default function SettingsSearch({
   return (
     <TextField
       id="search-settings"
-      placeholder={t('searchSettings')}
+      placeholder={t('search')}
       type="text"
       value={searchQuery}
       onChange={(e) => handleSearch(e.target.value)}
@@ -97,6 +103,7 @@ export default function SettingsSearch({
       autoComplete="off"
       startAdornment={renderStartAdornment()}
       endAdornment={renderEndAdornment()}
+      theme="bordered"
     />
   );
 }

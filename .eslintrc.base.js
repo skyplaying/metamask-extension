@@ -12,6 +12,9 @@ module.exports = {
   },
 
   rules: {
+    // TODO: re-enable once the proposed feature at https://github.com/gajus/eslint-plugin-jsdoc/pull/964#issuecomment-1936470252 is available
+    'jsdoc/check-line-alignment': 'off',
+
     'default-param-last': 'off',
     'prefer-object-spread': 'error',
     'require-atomic-updates': 'off',
@@ -63,5 +66,17 @@ module.exports = {
     // a browser context. For instance, we may import polyfills which change
     // global variables, or we may import stylesheets.
     'import/no-unassigned-import': 'off',
+
+    // import/no-named-as-default-member checks if default imports also have
+    // named exports matching properties used on the default import. Example:
+    // in confirm-seed-phrase-component.test.js we import sinon from 'sinon'
+    // and later access sinon.spy. spy is also exported from sinon directly and
+    // thus triggers the error. Turning this rule off to prevent churn when
+    // upgrading eslint and dependencies. This rule should be evaluated and
+    // if agreeable turned on upstream in @metamask/eslint-config
+    'import/no-named-as-default-member': 'off',
+
+    // This is necessary to run eslint on Windows and not get a thousand CRLF errors
+    'prettier/prettier': ['error', { endOfLine: 'auto' }],
   },
 };

@@ -1,7 +1,9 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { isEqual } from 'lodash';
 import Jazzicon from '../jazzicon';
+
 import { getAssetImageURL } from '../../../helpers/utils/util';
 import BlockieIdenticon from './blockieIdenticon';
 
@@ -10,8 +12,11 @@ const getStyles = (diameter) => ({
   width: diameter,
   borderRadius: diameter / 2,
 });
+const getImage = async (image, ipfsGateway) => {
+  return await getAssetImageURL(image, ipfsGateway);
+};
 
-export default class Identicon extends PureComponent {
+export default class Identicon extends Component {
   static propTypes = {
     /**
      * Adds blue border around the Identicon used for selected account.
@@ -48,10 +53,6 @@ export default class Identicon extends PureComponent {
      */
     imageBorder: PropTypes.bool,
     /**
-     * Check if use token detection
-     */
-    useTokenDetection: PropTypes.bool,
-    /**
      * Add list of token in object
      */
     tokenList: PropTypes.object,
@@ -59,6 +60,15 @@ export default class Identicon extends PureComponent {
      * User preferred IPFS gateway
      */
     ipfsGateway: PropTypes.string,
+    /**
+     * Watched NFT contract data keyed by address
+     */
+    watchedNftContracts: PropTypes.object,
+  };
+
+  state = {
+    imageLoadingError: false,
+    imageUrl: '',
   };
 
   static defaultProps = {
@@ -70,11 +80,28 @@ export default class Identicon extends PureComponent {
     useBlockie: false,
     alt: '',
     tokenList: {},
+    watchedNftContracts: {},
   };
 
+  loadImage = async () => {
+    const result = await getImage(this.props.image, this.props.ipfsGateway);
+    this.setState({ imageUrl: result });
+  };
+
+  async componentDidMount() {
+    this.loadImage();
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (prevProps.image !== this.props.image) {
+      this.loadImage();
+    }
+  }
+
   renderImage() {
-    const { className, diameter, alt, imageBorder, ipfsGateway } = this.props;
+    const { className, diameter, alt, imageBorder } = this.props;
     let { image } = this.props;
+    const { imageUrl } = this.state;
 
     if (Array.isArray(image) && image.length) {
       image = image[0];
@@ -84,7 +111,7 @@ export default class Identicon extends PureComponent {
       typeof image === 'string' &&
       image.toLowerCase().startsWith('ipfs://')
     ) {
-      image = getAssetImageURL(image, ipfsGateway);
+      image = imageUrl;
     }
 
     return (
@@ -95,19 +122,17 @@ export default class Identicon extends PureComponent {
         src={image}
         style={getStyles(diameter)}
         alt={alt}
+        onError={() => {
+          this.setState({ imageLoadingError: true });
+        }}
       />
     );
   }
 
   renderJazzicon() {
-    const {
-      address,
-      className,
-      diameter,
-      alt,
-      useTokenDetection,
-      tokenList,
-    } = this.props;
+    const { address, className, diameter, alt } = this.props;
+    const tokenList = this.getTokenList();
+
     return (
       <Jazzicon
         address={address}
@@ -115,7 +140,6 @@ export default class Identicon extends PureComponent {
         className={classnames('identicon', className)}
         style={getStyles(diameter)}
         alt={alt}
-        useTokenDetection={useTokenDetection}
         tokenList={tokenList}
       />
     );
@@ -134,45 +158,65 @@ export default class Identicon extends PureComponent {
     );
   }
 
+  renderBlockieOrJazzIcon() {
+    const { useBlockie } = this.props;
+    return useBlockie ? this.renderBlockie() : this.renderJazzicon();
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    // We only want to re-render if props are different.
+    return !isEqual(nextProps, this.props) || !isEqual(nextState, this.state);
+  }
+
+  getTokenImage() {
+    const { address, tokenList } = this.props;
+    return tokenList[address?.toLowerCase()]?.iconUrl;
+  }
+
+  getNftImage() {
+    const { address, watchedNftContracts } = this.props;
+    return watchedNftContracts[address?.toLowerCase()]?.logo;
+  }
+
+  getTokenList() {
+    const { address } = this.props;
+    const tokenImage = this.getTokenImage();
+    const nftImage = this.getNftImage();
+    const iconUrl = tokenImage || nftImage;
+
+    if (!iconUrl) {
+      return {};
+    }
+
+    return {
+      [address.toLowerCase()]: { iconUrl },
+    };
+  }
+
   render() {
-    const {
-      address,
-      image,
-      useBlockie,
-      addBorder,
-      diameter,
-      useTokenDetection,
-      tokenList,
-    } = this.props;
+    const { address, image, addBorder, diameter } = this.props;
+    const { imageLoadingError } = this.state;
     const size = diameter + 8;
+
+    if (imageLoadingError) {
+      return this.renderBlockieOrJazzIcon();
+    }
 
     if (image) {
       return this.renderImage();
     }
 
     if (address) {
-      if (process.env.TOKEN_DETECTION_V2) {
-        if (tokenList[address.toLowerCase()]?.iconUrl) {
-          return this.renderJazzicon();
-        }
-      } else {
-        /** TODO: Remove during TOKEN_DETECTION_V2 feature flag clean up */
-        // token from dynamic api list is fetched when useTokenDetection is true
-        // And since the token.address from allTokens is checksumaddress
-        // tokenAddress have to be changed to lowercase when we are using dynamic list
-        const tokenAddress = useTokenDetection
-          ? address.toLowerCase()
-          : address;
-        if (tokenAddress && tokenList[tokenAddress]?.iconUrl) {
-          return this.renderJazzicon();
-        }
+      if (this.getTokenImage() || this.getNftImage()) {
+        return this.renderJazzicon();
       }
+
       return (
         <div
           className={classnames({ 'identicon__address-wrapper': addBorder })}
           style={addBorder ? getStyles(size) : null}
         >
-          {useBlockie ? this.renderBlockie() : this.renderJazzicon()}
+          {this.renderBlockieOrJazzIcon()}
         </div>
       );
     }

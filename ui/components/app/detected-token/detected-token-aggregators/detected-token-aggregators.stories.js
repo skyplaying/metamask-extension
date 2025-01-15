@@ -1,17 +1,17 @@
 import React from 'react';
-import { DISPLAY } from '../../../../helpers/constants/design-system';
+import { Display } from '../../../../helpers/constants/design-system';
 
-import Box from '../../../ui/box';
+import { Box } from '../../../component-library';
 import DetectedTokenAggregators from './detected-token-aggregators';
 
 export default {
   title: 'Components/App/DetectedToken/DetectedTokenAggregators',
-  id: __filename,
+
   argTypes: {
-    aggregatorsList: { control: 'array' },
+    aggregators: { control: 'array' },
   },
   args: {
-    aggregatorsList1: [
+    aggregators1: [
       'Aave',
       'Bancor',
       'CMC',
@@ -25,15 +25,15 @@ export default {
       'Zerion',
       '0x',
     ],
-    aggregatorsList2: ['Aave', 'Bancor'],
+    aggregators2: ['Aave', 'Bancor'],
   },
 };
 
 const Template = (args) => {
   return (
-    <Box display={DISPLAY.GRID}>
-      <DetectedTokenAggregators aggregatorsList={args.aggregatorsList1} />
-      <DetectedTokenAggregators aggregatorsList={args.aggregatorsList2} />
+    <Box display={Display.Grid}>
+      <DetectedTokenAggregators aggregators={args.aggregators1} />
+      <DetectedTokenAggregators aggregators={args.aggregators2} />
     </Box>
   );
 };

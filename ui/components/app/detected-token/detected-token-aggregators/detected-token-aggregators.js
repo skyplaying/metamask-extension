@@ -1,50 +1,61 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { I18nContext } from '../../../../contexts/i18n';
 
-import Box from '../../../ui/box';
-import Button from '../../../ui/button';
-import Typography from '../../../ui/typography/typography';
+import { useI18nContext } from '../../../../hooks/useI18nContext';
+
 import {
-  DISPLAY,
-  FONT_WEIGHT,
-  TYPOGRAPHY,
+  Display,
+  FontWeight,
+  TextVariant,
 } from '../../../../helpers/constants/design-system';
+import { Box, ButtonLink, Text } from '../../../component-library';
 
-const DetectedTokenAggregators = ({ aggregatorsList }) => {
-  const t = useContext(I18nContext);
-  const numOfHiddenAggregators = parseInt(aggregatorsList.length, 10) - 2;
+const NUMBER_OF_AGGREGATORS_TO_DISPLAY = 2;
+
+const DetectedTokenAggregators = ({ aggregators }) => {
+  const t = useI18nContext();
+  const numOfHiddenAggregators =
+    parseInt(aggregators.length, 10) - NUMBER_OF_AGGREGATORS_TO_DISPLAY;
   const [displayMore, setDisplayMore] = useState(false);
 
   return (
-    <Box display={DISPLAY.INLINE_FLEX} className="detected-token-aggregators">
-      <Typography variant={TYPOGRAPHY.H7} fontWeight={FONT_WEIGHT.NORMAL}>
+    <Box display={Display.InlineFlex} className="detected-token-aggregators">
+      <Text variant={TextVariant.bodySm} as="h6" fontWeight={FontWeight.Normal}>
         {t('fromTokenLists', [
           numOfHiddenAggregators > 0 && !displayMore ? (
-            <Typography variant={TYPOGRAPHY.H7} fontWeight={FONT_WEIGHT.NORMAL}>
-              {`${aggregatorsList.slice(0, 2).join(', ')}`}
-              <Button
-                type="link"
+            <Text
+              as="h6"
+              fontWeight={FontWeight.Normal}
+              key="detected-token-aggrgators-with-more"
+            >
+              {`${aggregators
+                .slice(0, NUMBER_OF_AGGREGATORS_TO_DISPLAY)
+                .join(', ')}`}
+              <ButtonLink
                 className="detected-token-aggregators__link"
                 onClick={() => setDisplayMore(true)}
                 key="detected-token-aggrgators-link"
               >
                 {t('plusXMore', [numOfHiddenAggregators])}
-              </Button>
-            </Typography>
+              </ButtonLink>
+            </Text>
           ) : (
-            <Typography variant={TYPOGRAPHY.H7} fontWeight={FONT_WEIGHT.NORMAL}>
-              {`${aggregatorsList.join(', ')}.`}
-            </Typography>
+            <Text
+              as="h6"
+              fontWeight={FontWeight.Normal}
+              key="detected-token-aggrgators-without-more"
+            >
+              {`${aggregators.join(', ')}.`}
+            </Text>
           ),
         ])}
-      </Typography>
+      </Text>
     </Box>
   );
 };
 
 DetectedTokenAggregators.propTypes = {
-  aggregatorsList: PropTypes.array.isRequired,
+  aggregators: PropTypes.array.isRequired,
 };
 
 export default DetectedTokenAggregators;
